@@ -64,13 +64,13 @@ inline void spdlog::details::line_logger::write(const char* fmt, const Args&... 
 {
     if (!_enabled)
         return;
-    try
+    SPDLOG_TRY
     {
         _log_msg.raw.write(fmt, args...);
     }
-    catch (const fmt::FormatError& e)
+    SPDLOG_CATCH(const fmt::FormatError, e)
     {
-        throw spdlog_ex(fmt::format("formatting error while processing format string '{}': {}", fmt, e.what()));
+        SPDLOG_THROW(spdlog_ex(fmt::format("formatting error while processing format string '{}': {}", fmt, e.what())));
     }
 }
 

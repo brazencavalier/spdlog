@@ -48,7 +48,7 @@ protected:
         }
         else
         {
-            throw spdlog_ex("Send to Android logcat failed");
+            SPDLOG_THROW(spdlog_ex("Send to Android logcat failed"));
         }
     }
 
@@ -76,7 +76,7 @@ private:
         case spdlog::level::emerg:
             return ANDROID_LOG_FATAL;
         default:
-            throw spdlog_ex("Incorrect level value");
+            SPDLOG_THROW(spdlog_ex("Incorrect level value"));
         }
     }
 

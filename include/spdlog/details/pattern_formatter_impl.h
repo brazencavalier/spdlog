@@ -611,7 +611,7 @@ inline void spdlog::pattern_formatter::handle_flag(char flag)
 
 inline void spdlog::pattern_formatter::format(details::log_msg& msg)
 {
-    try
+    SPDLOG_TRY
     {
         auto tm_time = details::os::localtime(log_clock::to_time_t(msg.time));
         for (auto &f : _formatters)
@@ -621,8 +621,8 @@ inline void spdlog::pattern_formatter::format(details::log_msg& msg)
         //write eol
         msg.formatted << details::os::eol();
     }
-    catch(const fmt::FormatError& e)
+    SPDLOG_CATCH(const fmt::FormatError, e)
     {
-        throw spdlog_ex(fmt::format("formatting error while processing format string: {}", e.what()));
+        SPDLOG_THROW(spdlog_ex(fmt::format("formatting error while processing format string: {}", e.what())));
     }
 }

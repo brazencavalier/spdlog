@@ -206,12 +206,12 @@ inline spdlog::details::async_log_helper::async_log_helper(
 // and wait for it to finish gracefully
 inline spdlog::details::async_log_helper::~async_log_helper()
 {
-    try
+    SPDLOG_TRY
     {
         push_msg(async_msg(async_msg_type::terminate));
         _worker_thread.join();
     }
-    catch (...) // don't crash in destructor
+    SPDLOG_CATCH_ALL // don't crash in destructor
     {}
 }
 
@@ -249,18 +249,18 @@ inline void spdlog::details::async_log_helper::flush()
 
 inline void spdlog::details::async_log_helper::worker_loop()
 {
-    try
+    SPDLOG_TRY
     {
         if (_worker_warmup_cb) _worker_warmup_cb();
         auto last_pop = details::os::now();
         auto last_flush = last_pop;
         while(process_next_msg(last_pop, last_flush));
     }
-    catch (const std::exception& ex)
+    SPDLOG_CATCH (const std::exception, ex)
     {
         _last_workerthread_ex = std::make_shared<spdlog_ex>(std::string("async_logger worker thread exception: ") + ex.what());
     }
-    catch (...)
+    SPDLOG_CATCH_ALL
     {
         _last_workerthread_ex = std::make_shared<spdlog_ex>("async_logger worker thread exception");
     }
@@ -356,7 +356,7 @@ inline void spdlog::details::async_log_helper::throw_if_bad_worker()
     if (_last_workerthread_ex)
     {
         auto ex = std::move(_last_workerthread_ex);
-        throw *ex;
+        SPDLOG_THROW(*ex);
     }
 }
 

@@ -19,11 +19,56 @@
 
 #include <spdlog/details/null_mutex.h>
 
-//visual studio does not support noexcept yet
-#ifndef _MSC_VER
-#define SPDLOG_NOEXCEPT noexcept
-#else
-#define SPDLOG_NOEXCEPT throw()
+// this is the test used by cppformat
+#ifndef SPDLOG_EXCEPTIONS
+# if defined(__GNUC__) && !defined(__EXCEPTIONS)
+#   define SPDLOG_EXCEPTIONS 0
+# elif defined(_MSC_VER) && !_HAS_EXCEPTIONS
+#   define SPDLOG_EXCEPTIONS 0
+# else
+#   define SPDLOG_EXCEPTIONS 1  
+# endif
+#endif
+
+// Visual Studio 14.0 supports noexcept
+#ifndef SPDLOG_NOEXCEPT
+# if SPDLOG_EXCEPTIONS
+#   define SPDLOG_NOEXCEPT noexcept
+# else
+#   define SPDLOG_NOEXCEPT
+# endif
+#endif
+
+#ifndef SPDLOG_TRY
+# if SPDLOG_EXCEPTIONS
+#   define SPDLOG_TRY try
+# else
+#   define SPDLOG_TRY if (true)
+# endif
+#endif
+
+#ifndef SPDLOG_CATCH
+# if SPDLOG_EXCEPTIONS
+#   define SPDLOG_CATCH(t, x) catch (t & x)
+# else
+#   define SPDLOG_CATCH(t, x) for (t x; false;)
+# endif
+#endif
+
+#ifndef SPDLOG_CATCH_ALL
+# if SPDLOG_EXCEPTIONS
+#   define SPDLOG_CATCH_ALL catch (...)
+# else
+#   define SPDLOG_CATCH_ALL if (false)
+# endif
+#endif
+
+#ifndef SPDLOG_THROW 
+# if SPDLOG_EXCEPTIONS
+#   define SPDLOG_THROW(x) throw x
+# else
+#   define SPDLOG_THROW(x) assert(false)
+# endif
 #endif
 
 namespace spdlog

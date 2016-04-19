@@ -2639,7 +2639,7 @@ public:
     const char *filename = "madeup";
     std::FILE *file = std::fopen(filename, "r");
     if (!file)
-    throw fmt::SystemError(errno, "cannot open file '{}'", filename);
+    FMT_THROW(fmt::SystemError(errno, "cannot open file '{}'", filename));
     \endrst
     */
     SystemError(int error_code, CStringRef message)
@@ -3611,8 +3611,8 @@ public:
     LPOFSTRUCT of = LPOFSTRUCT();
     HFILE file = OpenFile(filename, &of, OF_READ);
     if (file == HFILE_ERROR) {
-    throw fmt::WindowsError(GetLastError(),
-    "cannot open file '{}'", filename);
+    FMT_THROW(fmt::WindowsError(GetLastError(),
+    "cannot open file '{}'", filename));
     }
     \endrst
     */

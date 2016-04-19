@@ -142,7 +142,7 @@ private:
     void throw_if_exists(const std::string &logger_name)
     {
         if (_loggers.find(logger_name) != _loggers.end())
-            throw spdlog_ex("logger with name '" + logger_name + "' already exists");
+            SPDLOG_THROW(spdlog_ex("logger with name '" + logger_name + "' already exists"));
     }
     Mutex _mutex;
     std::unordered_map <std::string, std::shared_ptr<logger>> _loggers;
